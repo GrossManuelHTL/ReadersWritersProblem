@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReadersWritersProblem"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Art Collaboration" Height="450" Width="800">
     <Grid>
-
+            <TextBlock Text="Hallo du" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
 </Window>

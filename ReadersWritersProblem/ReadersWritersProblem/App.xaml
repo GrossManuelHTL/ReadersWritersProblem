@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:ReadersWritersProblem"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+         <ResourceDictionary>
+             <BitmapImage x:Key = "Betrachter" UriSource="images/leinwand.jpg"></BitmapImage>
+         </ResourceDictionary>
     </Application.Resources>
 </Application>

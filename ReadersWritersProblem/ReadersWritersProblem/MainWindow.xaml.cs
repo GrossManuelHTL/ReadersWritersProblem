@@ -22,61 +22,71 @@ namespace ReadersWritersProblem
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        private readonly DispatcherTimer timer = new DispatcherTimer();
-        private readonly double speed = 1; // Geschwindigkeit der Bewegung
-        private readonly double targetY = 100; // Y-Position, bis zu der sich die Bilder bewegen sollen
-        private bool movingLeft = true; // Richtung der linken Bewegung
-        private bool movingRight = true; // Richtung der rechten Bewegung
+        private int sharedData = 0;
+        private int readersCount = 0;
+        private readonly object lockObject = new object();
 
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += MainWindow_Loaded;
         }
-
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void Writer()
         {
-            // Timer für die Bildbewegung einrichten
-            timer.Interval = TimeSpan.FromMilliseconds(10);
-            timer.Tick += Timer_Tick;
-            timer.Start();
-        }
+            for (int i = 0; i < 5; i++)
+            {
+                lock (lockObject)
+                {
+                    AppendLog($"Writer is writing. Shared Data before write: {sharedData}");
+                    sharedData++;
+                    AppendLog($"Writer finished writing. Shared Data after write: {sharedData}");
+                }
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            MoveImage(imageLeft, speed, -speed, ref movingLeft);
-            MoveImage(imageRight, -speed, -speed, ref movingRight);
-        }
-
-        private void MoveImage(Image image, double deltaX, double deltaY, ref bool moving)
-        {
-            double currentX = Canvas.GetLeft(image);
-            double currentY = Canvas.GetTop(image);
-            
-            if (moving && currentY > targetY)
-            {
-                MoveImage(image, deltaX, deltaY);
-            }
-            else
-            {
-                moving = false;
-                MoveImage(image, -deltaX, deltaY);
-            }
-            
-            if (!moving && currentY <= 0)
-            {
-                moving = true;
+                Thread.Sleep(1000);
             }
         }
 
-        private void MoveImage(Image image, double deltaX, double deltaY)
+        private void Reader()
         {
-            double newX = Canvas.GetLeft(image) + deltaX;
-            double newY = Canvas.GetTop(image) + deltaY;
-            Canvas.SetLeft(image, newX);
-            Canvas.SetTop(image, newY);
+            for (int i = 0; i < 5; i++)
+            {
+                lock (lockObject)
+                {
+                    readersCount++;
+                    if (readersCount == 1)
+                    {
+                        AppendLog($"First reader is reading. Shared Data: {sharedData}");
+                    }
+                }
+                
+                Thread.Sleep(50);
+
+                lock (lockObject)
+                {
+                    readersCount--;
+                    if (readersCount == 0)
+                    {
+                        AppendLog("Last reader finished reading.");
+                    }
+                }
+
+                Thread.Sleep(1000);
+            }
         }
 
+        private void AppendLog(string message)
+        {
+            Dispatcher.Invoke(() => logTextBox.AppendText(message + Environment.NewLine));
+        }
+
+        private void StartSimulationButton_Click(object sender, RoutedEventArgs e)
+        {
+            Thread writer1 = new Thread(Writer);
+            Thread reader1 = new Thread(Reader);
+            Thread reader2 = new Thread(Reader);
+
+            writer1.Start();
+            reader1.Start();
+            reader2.Start();
+        }
     }
 }

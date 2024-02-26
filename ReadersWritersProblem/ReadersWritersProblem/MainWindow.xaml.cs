@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -34,30 +35,45 @@ namespace ReadersWritersProblem
         {
             for (int i = 0; i < 5; i++)
             {
+                Dispatcher.Invoke(() =>
+                {
+                    imageLeft.Margin = new Thickness(100, 0, 0, 0);
+                });
                 lock (lockObject)
                 {
+
                     AppendLog($"Writer is writing. Shared Data before write: {sharedData}");
                     sharedData++;
                     AppendLog($"Writer finished writing. Shared Data after write: {sharedData}");
-                }
 
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    imageLeft.Margin = new Thickness(50, 0, 0, 0);
+                });
                 Thread.Sleep(1000);
             }
         }
 
-        private void Reader()
+        private void Reader(Image image)
         {
             for (int i = 0; i < 5; i++)
             {
+                Dispatcher.Invoke(() =>
+                {
+                    ScaleTransform scaleTransform = new ScaleTransform(-1, 1);
+                    image.RenderTransform = scaleTransform;
+                });
                 lock (lockObject)
                 {
                     readersCount++;
                     if (readersCount == 1)
                     {
                         AppendLog($"First reader is reading. Shared Data: {sharedData}");
+
                     }
                 }
-                
+
                 Thread.Sleep(50);
 
                 lock (lockObject)
@@ -69,6 +85,10 @@ namespace ReadersWritersProblem
                     }
                 }
 
+                Dispatcher.Invoke(() =>
+                {
+                    image.RenderTransform = Transform.Identity;
+                });
                 Thread.Sleep(1000);
             }
         }
@@ -81,12 +101,18 @@ namespace ReadersWritersProblem
         private void StartSimulationButton_Click(object sender, RoutedEventArgs e)
         {
             Thread writer1 = new Thread(Writer);
-            Thread reader1 = new Thread(Reader);
-            Thread reader2 = new Thread(Reader);
+            Thread reader1 = new Thread(() => Reader(imageRight1));
+            Thread reader2 = new Thread(() => Reader(imageRight2));
 
             writer1.Start();
             reader1.Start();
             reader2.Start();
         }
+
+        /* private void AnimationArtist()
+         {
+             imageLeft.Margin = new Thickness(100, 250, 0, 0);
+         }*/
+
     }
 }

@@ -35,22 +35,25 @@ namespace ReadersWritersProblem
         {
             for (int i = 0; i < 5; i++)
             {
-                Dispatcher.Invoke(() =>
-                {
-                    imageLeft.Margin = new Thickness(100, 0, 0, 0);
-                });
                 lock (lockObject)
                 {
+                    Dispatcher.Invoke(() =>
+                    {
+                        imageLeft.Margin = new Thickness(200, 0, 0, 0);
+                    });
 
                     AppendLog($"Writer is writing. Shared Data before write: {sharedData}");
                     sharedData++;
+                    Thread.Sleep(500);
                     AppendLog($"Writer finished writing. Shared Data after write: {sharedData}");
 
+                    Dispatcher.Invoke(() =>
+                    {
+                        imageLeft.Margin = new Thickness(0, 0, 0, 0);
+                    });
                 }
-                Dispatcher.Invoke(() =>
-                {
-                    imageLeft.Margin = new Thickness(50, 0, 0, 0);
-                });
+                
+                
                 Thread.Sleep(1000);
             }
         }
@@ -59,14 +62,14 @@ namespace ReadersWritersProblem
         {
             for (int i = 0; i < 5; i++)
             {
-                Dispatcher.Invoke(() =>
-                {
-                    ScaleTransform scaleTransform = new ScaleTransform(-1, 1);
-                    image.RenderTransform = scaleTransform;
-                });
                 lock (lockObject)
                 {
                     readersCount++;
+                    Dispatcher.Invoke(() =>
+                    {
+                        ScaleTransform scaleTransform = new ScaleTransform(-1, 1);
+                        image.RenderTransform = scaleTransform;
+                    });
                     if (readersCount == 1)
                     {
                         AppendLog($"First reader is reading. Shared Data: {sharedData}");
@@ -74,7 +77,8 @@ namespace ReadersWritersProblem
                     }
                 }
 
-                Thread.Sleep(50);
+           
+                Thread.Sleep(500);
 
                 lock (lockObject)
                 {
@@ -83,12 +87,14 @@ namespace ReadersWritersProblem
                     {
                         AppendLog("Last reader finished reading.");
                     }
+                    Dispatcher.Invoke(() =>
+                    {
+                        image.RenderTransform = Transform.Identity;
+                    });
                 }
-
-                Dispatcher.Invoke(() =>
-                {
-                    image.RenderTransform = Transform.Identity;
-                });
+                
+               
+                
                 Thread.Sleep(1000);
             }
         }
@@ -108,11 +114,5 @@ namespace ReadersWritersProblem
             reader1.Start();
             reader2.Start();
         }
-
-        /* private void AnimationArtist()
-         {
-             imageLeft.Margin = new Thickness(100, 250, 0, 0);
-         }*/
-
     }
 }

@@ -70,9 +70,9 @@ namespace ReadersWritersProblem
                         ScaleTransform scaleTransform = new ScaleTransform(-1, 1);
                         image.RenderTransform = scaleTransform;
                     });
-                    if (readersCount == 1)
+                    if (readersCount >= 1)
                     {
-                        AppendLog($"First reader is reading. Shared Data: {sharedData}");
+                        AppendLog($"Reader {readersCount} is reading. Shared Data: {sharedData}");
 
                     }
                 }

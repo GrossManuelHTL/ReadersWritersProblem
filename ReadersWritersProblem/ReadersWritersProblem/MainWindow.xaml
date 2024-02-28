@@ -10,7 +10,7 @@
 
         <Canvas Name="canvas" Background="White">
             <Image Source="images/leinwand.jpg" Width="100" Height="100" Canvas.Left="450" Canvas.Top="250"/>
-            <Image x:Name = "imageLeft" Source="images/kuenstler.jpg" Width="150" Height="150" Canvas.Left="25" Canvas.Top="250"/>
+            <Image x:Name = "imageLeft" Visibility="Visible" Source="images/kuenstler.png" Width="150" Height="150" Canvas.Left="25" Canvas.Top="250"/>
             <Image x:Name = "imageRight1" Source="images/betrachter.png" Width="100" Height="100" Canvas.Right="75" Canvas.Top="330"/>
             <Image x:Name = "imageRight2" Source="images/betrachter.png" Width="100" Height="100" Canvas.Right="75" Canvas.Top="225"/>
         </Canvas>

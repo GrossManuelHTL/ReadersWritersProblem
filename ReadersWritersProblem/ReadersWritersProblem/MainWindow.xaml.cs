@@ -26,6 +26,8 @@ namespace ReadersWritersProblem
         private int sharedData = 0;
         private int readersCount = 0;
         private readonly object lockObject = new object();
+        private int writerCount = 0;
+        
 
         public MainWindow()
         {
@@ -33,69 +35,80 @@ namespace ReadersWritersProblem
         }
         private void Writer()
         {
+            var randomdings = new Random();
+            int delay;
             for (int i = 0; i < 5; i++)
             {
-                lock (lockObject)
+                if (readersCount == 0)
                 {
-                    Dispatcher.Invoke(() =>
+                    lock (lockObject)
                     {
-                        imageLeft.Margin = new Thickness(200, 0, 0, 0);
-                    });
+                        writerCount++;
+                        Dispatcher.Invoke(() =>
+                        {
+                            imageLeft.Margin = new Thickness(200, 0, 0, 0);
+                        });
 
-                    AppendLog($"Writer is writing. Shared Data before write: {sharedData}");
-                    sharedData++;
-                    Thread.Sleep(500);
-                    AppendLog($"Writer finished writing. Shared Data after write: {sharedData}");
+                        AppendLog($"Writer is writing. Shared Data before write: {sharedData}");
+                        sharedData++;
+                        delay = randomdings.Next(500, 1500);
+                        Thread.Sleep(delay);
+                        AppendLog($"Writer finished writing. Shared Data after write: {sharedData}");
 
-                    Dispatcher.Invoke(() =>
-                    {
-                        imageLeft.Margin = new Thickness(0, 0, 0, 0);
-                    });
+                        Dispatcher.Invoke(() =>
+                        {
+                            imageLeft.Margin = new Thickness(0, 0, 0, 0);
+                        });
+                    }
+
+                    writerCount++;
                 }
-                
-                
                 Thread.Sleep(1000);
             }
         }
 
         private void Reader(Image image)
         {
+            var randommm = new Random();
+            int delay;
             for (int i = 0; i < 5; i++)
             {
-                lock (lockObject)
-                {
-                    readersCount++;
-                    Dispatcher.Invoke(() =>
-                    {
-                        ScaleTransform scaleTransform = new ScaleTransform(-1, 1);
-                        image.RenderTransform = scaleTransform;
-                    });
-                    if (readersCount == 1)
-                    {
-                        AppendLog($"First reader is reading. Shared Data: {sharedData}");
-
-                    }
-                }
-
-           
-                Thread.Sleep(500);
-
-                lock (lockObject)
-                {
-                    readersCount--;
-                    if (readersCount == 0)
-                    {
-                        AppendLog("Last reader finished reading.");
-                    }
-                    Dispatcher.Invoke(() =>
-                    {
-                        image.RenderTransform = Transform.Identity;
-                    });
-                }
                 
-               
+                    Thread.Sleep(500);
+                    lock (lockObject)
+                    {
+                        readersCount++;
+                        Dispatcher.Invoke(() =>
+                        {
+                            ScaleTransform scaleTransform = new ScaleTransform(-1, 1);
+                            image.RenderTransform = scaleTransform;
+                        });
+                        if (readersCount == 1)
+                        {
+                            AppendLog($"First reader is reading. Shared Data: {sharedData}");
+
+                        }
+                    }
+
+                    delay = randommm.Next(300, 1000);
+                    Thread.Sleep(delay);
+
+                    lock (lockObject)
+                    {
+                        readersCount--;
+                        if (readersCount == 0)
+                        {
+                            AppendLog("Last reader finished reading.");
+                        }
+                        Dispatcher.Invoke(() =>
+                        {
+                            image.RenderTransform = Transform.Identity;
+                        });
+                    }
+
+                    delay = randommm.Next(300, 1000);
+                    Thread.Sleep(delay);
                 
-                Thread.Sleep(1000);
             }
         }
 

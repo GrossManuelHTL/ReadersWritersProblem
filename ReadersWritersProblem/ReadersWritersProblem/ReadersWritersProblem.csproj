@@ -11,9 +11,10 @@
       <None Remove="images\betrachter.png" />
       <Resource Include="images\betrachter.png" />
       <None Remove="images\kuenstler.jpg" />
-      <Resource Include="images\kuenstler.jpg" />
       <None Remove="images\leinwand.jpg" />
       <Resource Include="images\leinwand.jpg" />
+      <None Remove="images\kuenstler.png" />
+      <Resource Include="images\kuenstler.png" />
     </ItemGroup>
 
 </Project>

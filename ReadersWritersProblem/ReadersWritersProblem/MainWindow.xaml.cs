@@ -26,76 +26,90 @@ namespace ReadersWritersProblem
         private int sharedData = 0;
         private int readersCount = 0;
         private readonly object lockObject = new object();
+        private int writerCount = 0;
+        
 
         public MainWindow()
         {
             InitializeComponent();
         }
-        private void Writer()
+        private void Writer(Image image)
         {
+            var rnd = new Random();
+            int delay;
             for (int i = 0; i < 5; i++)
             {
-                lock (lockObject)
+                if (readersCount == 0)
                 {
-                    Dispatcher.Invoke(() =>
+                    lock (lockObject)
                     {
-                        imageLeft.Margin = new Thickness(200, 0, 0, 0);
-                    });
+                        writerCount++;
+                        Dispatcher.Invoke(() =>
+                        {
+                            image.Margin = new Thickness(200, 0, 0, 0);
+                        });
 
-                    AppendLog($"Writer is writing. Shared Data before write: {sharedData}");
-                    sharedData++;
-                    Thread.Sleep(500);
-                    AppendLog($"Writer finished writing. Shared Data after write: {sharedData}");
+                        AppendLog($"Writer {writerCount} is writing. Shared Data before write: {sharedData}");
+                        sharedData++;
+                        delay = rnd.Next(500, 1500);
+                        Thread.Sleep(delay);
+                        AppendLog($"Writer finished writing. Shared Data after write: {sharedData}");
 
-                    Dispatcher.Invoke(() =>
-                    {
-                        imageLeft.Margin = new Thickness(0, 0, 0, 0);
-                    });
+                        Dispatcher.Invoke(() =>
+                        {
+                            image.Margin = new Thickness(0, 0, 0, 0);
+                        });
+                    }
+
+                    writerCount--;
                 }
-                
-                
                 Thread.Sleep(1000);
             }
         }
 
-        private void Reader(Image image)
+        private void Reader(Image image, int n)
         {
+            var rnd = new Random();
+            int delay;
             for (int i = 0; i < 5; i++)
             {
-                lock (lockObject)
-                {
-                    readersCount++;
-                    Dispatcher.Invoke(() =>
-                    {
-                        ScaleTransform scaleTransform = new ScaleTransform(-1, 1);
-                        image.RenderTransform = scaleTransform;
-                    });
-                    if (readersCount >= 1)
-                    {
-                        AppendLog($"Reader {readersCount} is reading. Shared Data: {sharedData}");
-
-                    }
-                }
-
-           
-                Thread.Sleep(500);
-
-                lock (lockObject)
-                {
-                    readersCount--;
-                    if (readersCount == 0)
-                    {
-                        AppendLog("Last reader finished reading.");
-                    }
-                    Dispatcher.Invoke(() =>
-                    {
-                        image.RenderTransform = Transform.Identity;
-                    });
-                }
                 
-               
-                
-                Thread.Sleep(1000);
+                    Thread.Sleep(500);
+                    if (writerCount == 0)
+                    {
+                        lock (lockObject)
+                        {
+                            readersCount++;
+                            Dispatcher.Invoke(() =>
+                            {
+                                ScaleTransform scaleTransform = new ScaleTransform(-1, 1);
+                                image.RenderTransform = scaleTransform;
+                            });
+                            if (readersCount >= 1)
+                            {
+                                AppendLog($"Reader {n} is reading. Shared Data: {sharedData}");
+
+                            }
+                        }
+
+
+                        delay = rnd.Next(300, 1000);
+                        Thread.Sleep(delay);
+
+                        lock (lockObject)
+                        {
+                            readersCount--;
+                            if (readersCount == 0)
+                            {
+                                AppendLog("Last reader finished reading.");
+                            }
+
+                            Dispatcher.Invoke(() => { image.RenderTransform = Transform.Identity; });
+                        }
+
+                        delay = rnd.Next(300, 1000);
+                        Thread.Sleep(delay);
+                    }
             }
         }
 
@@ -106,13 +120,15 @@ namespace ReadersWritersProblem
 
         private void StartSimulationButton_Click(object sender, RoutedEventArgs e)
         {
-            Thread writer1 = new Thread(Writer);
-            Thread reader1 = new Thread(() => Reader(imageRight1));
-            Thread reader2 = new Thread(() => Reader(imageRight2));
+            Thread writer1 = new Thread(() => Writer(imageLeft1));
+            Thread reader1 = new Thread(() => Reader(imageRight1, 1));
+            Thread reader2 = new Thread(() => Reader(imageRight2, 2));
+            Thread reader3 = new Thread(() => Reader(imageRight3,3));
 
             writer1.Start();
             reader1.Start();
             reader2.Start();
+            reader3.Start();
         }
     }
 }

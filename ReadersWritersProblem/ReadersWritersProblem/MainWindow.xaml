@@ -8,14 +8,14 @@
         Title="Art Collaboration" Height="600" Width="1000">
     <Grid>
 
-        <Canvas Background="White">
-            <Image Source="images/leinwand.jpg" Width="100" Height="100" Canvas.Left="450" Canvas.Top="350"/>
-            <Image x:Name = "imageLeft1" Visibility="Visible" Source="images/kuenstler.png" Width="150" Height="150" Canvas.Left="25" Canvas.Top="350"/>
-            <Image x:Name = "imageRight3" Source="images/betrachter.png" Width="100" Height="100" Canvas.Right="75" Canvas.Top="450"/>
-            <Image x:Name = "imageRight1" Source="images/betrachter.png" Width="100" Height="100" Canvas.Right="75" Canvas.Top="330"/>
-            <Image x:Name = "imageRight2" Source="images/betrachter.png" Width="100" Height="100" Canvas.Right="75" Canvas.Top="225"/>
+        <Canvas Background="LightBlue">
+            <Image Source="images/leinwand.png" Visibility="Visible" Width="250"  Canvas.Left="380" Canvas.Top="270"/>
+            <Image x:Name = "imageLeft1" Visibility="Visible" Source="images/kuenstler.png" Width="200" Height="150" Canvas.Left="25" Canvas.Top="350"/>
+            <Image x:Name = "imageRight3" Source="images/betrachter.png" Width="150" Height="100" Canvas.Right="75" Canvas.Top="450"/>
+            <Image x:Name = "imageRight1" Source="images/betrachter.png" Width="150" Height="100" Canvas.Right="75" Canvas.Top="330"/>
+            <Image x:Name = "imageRight2" Source="images/betrachter.png" Width="150" Height="100" Canvas.Right="75" Canvas.Top="225"/>
+            <Image x:Name="imageBox" Width="100" Canvas.Top = "299" Canvas.Left = "449" Source="" />
         </Canvas>
-
         <StackPanel>
             <Button Content="Start Simulation" Click="StartSimulationButton_Click"/>
             <TextBox x:Name="logTextBox" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Height="200"/>

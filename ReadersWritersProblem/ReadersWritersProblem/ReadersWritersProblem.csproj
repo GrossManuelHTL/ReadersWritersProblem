@@ -12,10 +12,21 @@
       <Resource Include="images\betrachter.png" />
       <None Remove="images\kuenstler.jpg" />
       <None Remove="images\leinwand.jpg" />
-      <Resource Include="images\leinwand.jpg" />
       <None Remove="images\art.webp" />
       <None Remove="images\kuenstler.png" />
       <Resource Include="images\kuenstler.png" />
+      <None Remove="images\art1.jpg" />
+      <Resource Include="images\art1.jpg" />
+      <None Remove="images\art2.jpg" />
+      <Resource Include="images\art2.jpg" />
+      <None Remove="images\art3.jpg" />
+      <Resource Include="images\art3.jpg" />
+      <None Remove="images\art4.jpg" />
+      <Resource Include="images\art4.jpg" />
+      <None Remove="images\art5.jpg" />
+      <Resource Include="images\art5.jpg" />
+      <None Remove="images\leinwand.png" />
+      <Resource Include="images\leinwand.png" />
     </ItemGroup>
 
 </Project>

@@ -27,22 +27,30 @@ namespace ReadersWritersProblem
         private int readersCount = 0;
         private readonly object lockObject = new object();
         private int writerCount = 0;
-        
+        private string[] art = { "images/art1.png", "images/art2.jpg", "images/art3.jpg", "images/art4.jpg", "images/art5.jpg" };
+        private Random randomArt = new Random();
 
         public MainWindow()
         {
             InitializeComponent();
         }
+        private void ChangeImage(string imagePath)
+        {
+            BitmapImage image = new BitmapImage(new Uri(imagePath, UriKind.RelativeOrAbsolute));
+            imageBox.Source = image;
+        }
         private void Writer(Image image)
         {
             var rnd = new Random();
             int delay;
-            for (int i = 0; i < 5; i++)
+            string toPlace = art[randomArt.Next(0, 5)];
+            for (int i = 0; i < 15; i++)
             {
                 if (readersCount == 0)
                 {
                     lock (lockObject)
                     {
+                        Application.Current.Dispatcher.Invoke(() => ChangeImage(art[randomArt.Next(0, 5)]));   
                         writerCount++;
                         Dispatcher.Invoke(() =>
                         {
@@ -71,10 +79,10 @@ namespace ReadersWritersProblem
         {
             var rnd = new Random();
             int delay;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 15; i++)
             {
                 
-                    Thread.Sleep(500);
+                    Thread.Sleep(400);
                     if (writerCount == 0)
                     {
                         lock (lockObject)
